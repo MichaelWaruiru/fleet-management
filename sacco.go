@@ -40,7 +40,7 @@ func addSacco(db *sql.DB, sacco Sacco) error {
 	return err
 }
 
-// saccoHandler handles requests to the /home route
+// saccoHandler handles requests to the /sacco route
 func saccoHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
 		saccos, err := getAllSaccos(db)
@@ -63,7 +63,7 @@ func saccoHandler(w http.ResponseWriter, r *http.Request) {
 			fmt.Println("Error adding sacco")
 			return
 		}
-		http.Redirect(w, r, "/home", http.StatusSeeOther)
+		http.Redirect(w, r, "/sacco", http.StatusSeeOther)
 	} else {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 	}
@@ -84,7 +84,7 @@ func editSaccoHandler(w http.ResponseWriter, r *http.Request) {
 			fmt.Println("Error editing sacco")
 			return
 		}
-		http.Redirect(w, r, "/home", http.StatusSeeOther)
+		http.Redirect(w, r, "/sacco", http.StatusSeeOther)
 	} else {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 	}
@@ -99,7 +99,7 @@ func deleteSaccoHandler(w http.ResponseWriter, r *http.Request) {
 			fmt.Println("Error deleting sacco")
 			return
 		}
-		http.Redirect(w, r, "/home", http.StatusSeeOther)
+		http.Redirect(w, r, "/sacco", http.StatusSeeOther)
 	} else {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 	}

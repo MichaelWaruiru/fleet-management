@@ -55,7 +55,7 @@ func main() {
 	// http.HandleFunc("/login", loginHandler)
 	// http.HandleFunc("/logout", logoutHandler)
 
-	http.HandleFunc("/home", saccoHandler)
+	http.HandleFunc("/sacco", saccoHandler)
 	http.HandleFunc("/edit-sacco", editSaccoHandler)
 	http.HandleFunc("/delete-sacco", deleteSaccoHandler)
 
