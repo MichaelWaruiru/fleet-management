@@ -15,7 +15,7 @@ type Sacco struct {
 }
 
 // GetAllSaccos retrieves all saccos from the database
-func GetAllSaccos(db *sql.DB) ([]Sacco, error) {
+func getAllSaccos(db *sql.DB) ([]Sacco, error) {
 	rows, err := db.Query("SELECT id, sacco_name, manager, contact FROM saccos")
 	if err != nil {
 		return nil, err
@@ -35,7 +35,7 @@ func GetAllSaccos(db *sql.DB) ([]Sacco, error) {
 }
 
 // CreateSacco inserts a new Sacco into the database
-func CreateSacco(db *sql.DB, sacco Sacco) error {
+func addSacco(db *sql.DB, sacco Sacco) error {
 	_, err := db.Exec("INSERT INTO saccos (sacco_name, manager, contact) VALUES (?, ?, ?)", sacco.SaccoName, sacco.Manager, sacco.Contact)
 	return err
 }
@@ -43,7 +43,7 @@ func CreateSacco(db *sql.DB, sacco Sacco) error {
 // saccoHandler handles requests to the /home route
 func saccoHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
-		saccos, err := GetAllSaccos(db)
+		saccos, err := getAllSaccos(db)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -58,7 +58,7 @@ func saccoHandler(w http.ResponseWriter, r *http.Request) {
 			Manager:   r.FormValue("manager"),
 			Contact:   r.FormValue("contact"),
 		}
-		if err := CreateSacco(db, sacco); err != nil {
+		if err := addSacco(db, sacco); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			fmt.Println("Error adding sacco")
 			return
