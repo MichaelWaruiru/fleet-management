@@ -56,6 +56,8 @@ func main() {
 	// http.HandleFunc("/logout", logoutHandler)
 
 	http.HandleFunc("/home", saccoHandler)
+	http.HandleFunc("/edit-sacco", editSaccoHandler)
+	http.HandleFunc("/delete-sacco", deleteSaccoHandler)
 
 	fmt.Println("Server is running")
 	http.ListenAndServe(":8080", nil)
