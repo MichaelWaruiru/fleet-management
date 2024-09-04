@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <title>Sacco Management</title>
+</head>
+
+<body>
+    <div class="container mt-4">
+        <h1>Sacco List</h1>
+        <!-- Add Sacco Button -->
+        <div class="mb-3">
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addSaccoModal">Add Sacco</button>
+        </div>
+        <table class="table table-bordered">
+            <tr>
+                <th style="width: 33%;">Sacco Name</th>
+                <th style="width: 33%;">Manager</th>
+                <th style="width: 23%;">Contact</th>
+                <th style="width: 10%;">Actions</th>
+            </tr>
+            {{range .}}
+            <tr>
+                <td>{{.SaccoName}}</td>
+                <td>{{.Manager}}</td>
+                <td>{{.Contact}}</td>
+                <td>
+                    <!-- Edit Button with data attributes -->
+                    <button class="btn btn-warning btn-sm editSaccoBtn" data-bs-toggle="modal"
+                        data-bs-target="#editSaccoModal" data-saccoid="{{.ID}}">Edit</button>
+                    <br>
+                    <!-- Delete Button with data attributes -->
+                    <button class="btn btn-danger btn-sm deleteSaccoBtn" data-saccoid="{{.ID}}">Delete</button>
+                </td>
+            </tr>
+            {{end}}
+        </table>
+    </div>
+
+    <!-- Add Sacco Modal -->
+    <div class="modal fade" id="addSaccoModal" tabindex="-1" role="dialog" aria-labelledby="addSaccoModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addSaccoModalLabel">Add Sacco</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <!-- Add sacco form -->
+                    <form id="addSaccoForm" novalidate>
+                        <div class="form-group">
+                            <label for="saccoName">Sacco Name</label>
+                            <input type="text" class="form-control" id="saccoName" name="saccoName"
+                                placeholder="Enter Sacco Name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="manager">Manager</label>
+                            <input type="text" class="form-control" id="manager" name="manager" placeholder="Manager"
+                                required>
+                        </div>
+                        <div class="form-group">
+                            <label for="contact">Contact</label>
+                            <input type="text" class="form-control" id="contact" name="contact" placeholder="Contact"
+                                required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-success" id="submitSaccoBtn">Add Sacco</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Sacco Modal -->
+    <div class="modal fade" id="editSaccoModal" tabindex="-1" role="dialog" aria-labelledby="editSaccoModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editSaccoModalLabel">Edit Sacco</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <!-- Edit sacco form -->
+                    <form id="editSaccoForm" novalidate>
+                        <input type="hidden" id="editSaccoID" name="editSaccoID">
+                        <div class="form-group">
+                            <label for="editSaccoName">Sacco Name</label>
+                            <input type="text" class="form-control" id="editSaccoName" name="editSaccoName"
+                                placeholder="Enter Sacco Name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editManager">Manager</label>
+                            <input type="text" class="form-control" id="editManager" name="editManager"
+                                placeholder="Manager" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editContact">Contact</label>
+                            <input type="text" class="form-control" id="editContact" name="editContact"
+                                placeholder="Contact" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="saveEditSaccoBtn">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+    crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"
+    integrity="sha384-vtXRMe3mGCbOeY7l30aIg8H9p3GdeSe4IFlP6G8JMa7o7lXvnz3GFKzPxzJdPfGK"
+    crossorigin="anonymous"></script>
+<script src="/static/sacco.js"></script>
+
+</html>
