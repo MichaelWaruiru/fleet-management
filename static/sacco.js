@@ -6,7 +6,7 @@ $(document).ready(function () {
       const contact = $('#contact').val();
 
       if (saccoName && manager && contact) {
-          $.post('/home', {
+          $.post('/sacco', {
               sacco_name: saccoName,
               manager: manager,
               contact: contact
