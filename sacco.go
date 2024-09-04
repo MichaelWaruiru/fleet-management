@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"fmt"
 	"net/http"
 	"strconv"
 )
@@ -41,8 +42,7 @@ func CreateSacco(db *sql.DB, sacco Sacco) error {
 
 // saccoHandler handles requests to the /home route
 func saccoHandler(w http.ResponseWriter, r *http.Request) {
-	switch r.Method {
-	case "GET":
+	if r.Method == http.MethodGet {
 		saccos, err := GetAllSaccos(db)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -52,57 +52,67 @@ func saccoHandler(w http.ResponseWriter, r *http.Request) {
 		if err := tmpl.ExecuteTemplate(w, "sacco.html", saccos); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
-
-	case "POST":
-		switch r.URL.Path {
-		case "/home":
-			sacco := Sacco{
-				SaccoName: r.FormValue("sacco_name"),
-				Manager:   r.FormValue("manager"),
-				Contact:   r.FormValue("contact"),
-			}
-			if err := CreateSacco(db, sacco); err != nil {
-				http.Error(w, err.Error(), http.StatusInternalServerError)
-				return
-			}
+	} else if r.Method == http.MethodPost {
+		sacco := Sacco{
+			SaccoName: r.FormValue("sacco_name"),
+			Manager:   r.FormValue("manager"),
+			Contact:   r.FormValue("contact"),
+		}
+		if err := CreateSacco(db, sacco); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			fmt.Println("Error adding sacco")
+			return
 		}
 		http.Redirect(w, r, "/home", http.StatusSeeOther)
+	} else {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+	}
+}
 
-	case "/edit-sacco":
-		if r.URL.Path == "/edit-sacco" {
-			// Handle delete sacco
-			saccoID, _ := strconv.Atoi(r.FormValue("id"))
-			sacco := Sacco{
-				ID:        saccoID,
-				SaccoName: r.FormValue("sacco_name"),
-				Manager:   r.FormValue("manager"),
-				Contact:   r.FormValue("contact"),
-			}
-			if err := updateSacco(db, sacco); err != nil {
-				http.Error(w, err.Error(), http.StatusInternalServerError)
-			}
-		} else if r.URL.Path == "/delete-sacco" {
-			// Handle delete sacco
-			saccoID, _ := strconv.Atoi(r.FormValue("id"))
-			if err := deleteSacco(db, saccoID); err != nil {
-				http.Error(w, err.Error(), http.StatusInternalServerError)
-			}
+// editSaccoHandler handles editing a sacco
+func editSaccoHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method == http.MethodPost {
+		saccoID, _ := strconv.Atoi(r.FormValue("id"))
+		sacco := Sacco{
+			ID:        saccoID,
+			SaccoName: r.FormValue("sacco_name"),
+			Manager:   r.FormValue("manager"),
+			Contact:   r.FormValue("contact"),
+		}
+		if err := updateSacco(db, sacco); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			fmt.Println("Error editing sacco")
+			return
 		}
 		http.Redirect(w, r, "/home", http.StatusSeeOther)
+	} else {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+	}
+}
 
-	default:
+// deleteSaccoHandler handles deleting a sacco
+func deleteSaccoHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method == http.MethodPost {
+		saccoID, _ := strconv.Atoi(r.FormValue("id"))
+		if err := deleteSacco(db, saccoID); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			fmt.Println("Error deleting sacco")
+			return
+		}
+		http.Redirect(w, r, "/home", http.StatusSeeOther)
+	} else {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 	}
 }
 
 // Update sacco in the database
 func updateSacco(db *sql.DB, sacco Sacco) error {
-	_, err := db.Exec("Update saccos SET sacco_name=?, manager=?, contact=? WHERE id=?", sacco.SaccoName, sacco.Manager, sacco.ID)
+	_, err := db.Exec("UPDATE saccos SET sacco_name=?, manager=?, contact=? WHERE id=?", sacco.SaccoName, sacco.Manager, sacco.Contact, sacco.ID)
 	return err
 }
 
 // Delete sacco from the database
 func deleteSacco(db *sql.DB, id int) error {
-	_, err := db.Exec("Delete FROM saccos WHERE id=?", id)
+	_, err := db.Exec("DELETE FROM saccos WHERE id=?", id)
 	return err
 }
