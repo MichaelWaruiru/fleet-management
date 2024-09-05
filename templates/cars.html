@@ -1,0 +1,156 @@
+{{ define "cars" }}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cars Management</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container mt-4">
+        <h1>Cars List</h1>
+        <div class="mb-3">
+            <button class="btn btn-primary" data-toggle="modal" data-target="#addCarModal">Add Car</button>
+        </div>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Number Plate</th>
+                    <th>Make</th>
+                    <th>Model</th>
+                    <th>No. of Passengers</th>
+                    <th>Sacco</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{range .Cars}}
+                <tr>
+                    <td>{{.NumberPlate}}</td>
+                    <td>{{.Make}}</td>
+                    <td>{{.Model}}</td>
+                    <td>{{.NumberOfPassengers}}</td>
+                    <td>{{.SaccoName}}</td>
+                    <td>
+                        <button class="btn btn-warning btn-sm editCarBtn" data-toggle="modal"
+                            data-target="#editCarModal" data-carid="{{.ID}}">Edit</button>
+                        <button class="btn btn-danger btn-sm deleteCarBtn" data-carid="{{.ID}}">Delete</button>
+                    </td>
+                </tr>
+                {{end}}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Add Car Modal -->
+    <div class="modal fade" id="addCarModal" tabindex="-1" role="dialog" aria-labelledby="addCarModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addCarModalLabel">Add Car</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="addCarForm">
+                        <div class="form-group">
+                            <label for="numberPlate">Number Plate</label>
+                            <input type="text" class="form-control" id="numberPlate" name="numberPlate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="make">Make</label>
+                            <input type="text" class="form-control" id="make" name="make" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="model">Model</label>
+                            <input type="text" class="form-control" id="model" name="model" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="numberOfPassengers">No. of Passengers</label>
+                            <input type="number" class="form-control" id="numberOfPassengers" name="numberOfPassengers"
+                                required>
+                        </div>
+                        <!-- Dropdown for selecting SACCO -->
+                        <div class="form-group">
+                            <label for="saccoID">Select SACCO:</label>
+                            <select class="form-control" id="saccoID" name="saccoID" required>
+                                <option value="" selected disabled>Select SACCO</option>
+                                {{ range .Saccos }}
+                                <option value="{{ .ID }}">{{ .SaccoName }}</option>
+                                {{ end }}
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-success" id="submitCarBtn">Add Car</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Car Modal -->
+    <div class="modal fade" id="editCarModal" tabindex="-1" role="dialog" aria-labelledby="editCarModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editCarModalLabel">Edit Car</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="editCarForm">
+                        <input type="hidden" id="editCarID" name="editCarID">
+                        <div class="form-group">
+                            <label for="editNumberPlate">Number Plate</label>
+                            <input type="text" class="form-control" id="editNumberPlate" name="editNumberPlate"
+                                required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editMake">Make</label>
+                            <input type="text" class="form-control" id="editMake" name="editMake" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editModel">Model</label>
+                            <input type="text" class="form-control" id="editModel" name="editModel" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editNumberOfPassengers">No. of Passengers</label>
+                            <input type="number" class="form-control" id="editNumberOfPassengers"
+                                name="editNumberOfPassengers" required>
+                        </div>
+                        <!-- Dropdown for selecting SACCO -->
+                        <div class="form-group">
+                            <label for="editSaccoID">Select SACCO:</label>
+                            <select class="form-control" id="editSaccoID" name="editSaccoID" required>
+                                <option value="" selected disabled>Select SACCO</option>
+                                {{ range .Saccos }}
+                                <option value="{{ .ID }}">{{ .SaccoName }}</option>
+                                {{ end }}
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="saveEditCarBtn">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/cars.js"></script>
+</body>
+
+</html>
+{{ end }}
