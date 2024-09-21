@@ -67,7 +67,7 @@ func main() {
 	http.HandleFunc("/api/sacco_by_car", getSaccoByCarHandler)
 
 	http.HandleFunc("/drivers", driverHandler)
-	// http.HandleFunc("/drivers/edit/id", editDriverHandler)
+	http.HandleFunc("/drivers/edit", editDriverHandler)
 	// http.HandleFunc("/drivers/delete", deleteDriverHandler)
 
 	fmt.Println("Server is running")
