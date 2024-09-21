@@ -108,29 +108,28 @@
                 </div>
                 <div class="modal-body">
                     <form id="editCarForm">
-                        <input type="hidden" id="editCarID" name="editCarID">
+                        <input type="hidden" id="editCarID" name="id"> <!-- hidden field for car ID -->
                         <div class="form-group">
                             <label for="editNumberPlate">Number Plate</label>
-                            <input type="text" class="form-control" id="editNumberPlate" name="editNumberPlate"
-                                required>
+                            <input type="text" class="form-control" id="editNumberPlate" name="numberPlate" required>
                         </div>
                         <div class="form-group">
                             <label for="editMake">Make</label>
-                            <input type="text" class="form-control" id="editMake" name="editMake" required>
+                            <input type="text" class="form-control" id="editMake" name="make" required>
                         </div>
                         <div class="form-group">
                             <label for="editModel">Model</label>
-                            <input type="text" class="form-control" id="editModel" name="editModel" required>
+                            <input type="text" class="form-control" id="editModel" name="model" required>
                         </div>
                         <div class="form-group">
                             <label for="editNumberOfPassengers">No. of Passengers</label>
                             <input type="number" class="form-control" id="editNumberOfPassengers"
-                                name="editNumberOfPassengers" required>
+                                name="numberOfPassengers" required>
                         </div>
-                        <!-- Dropdown for selecting SACCO -->
+                        <!-- Dropdown for selecting sacco -->
                         <div class="form-group">
                             <label for="editSaccoID">Select SACCO:</label>
-                            <select class="form-control" id="editSaccoID" name="editSaccoID" required>
+                            <select class="form-control" id="editSaccoID" name="saccoID" required>
                                 <option value="" selected disabled>Select SACCO</option>
                                 {{ range .Saccos }}
                                 <option value="{{ .ID }}">{{ .SaccoName }}</option>

@@ -59,6 +59,17 @@ func main() {
 	http.HandleFunc("/edit-sacco", editSaccoHandler)
 	http.HandleFunc("/delete-sacco", deleteSaccoHandler)
 
+	http.HandleFunc("/cars", carHandler)
+	http.HandleFunc("/cars/", getCarHandler)
+	http.HandleFunc("/cars/edit", editCarHandler)
+	http.HandleFunc("/cars/delete", deleteCarHandler)
+
+	http.HandleFunc("/api/sacco_by_car", getSaccoByCarHandler)
+
+	http.HandleFunc("/drivers", driverHandler)
+	// http.HandleFunc("/drivers/edit/id", editDriverHandler)
+	// http.HandleFunc("/drivers/delete", deleteDriverHandler)
+
 	fmt.Println("Server is running")
 	http.ListenAndServe(":8080", nil)
 }

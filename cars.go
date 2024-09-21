@@ -111,16 +111,16 @@ func editCarHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	id, err := strconv.Atoi(r.URL.Query().Get("id"))
+	// Parse form values
+	err := r.ParseForm()
 	if err != nil {
-		http.Error(w, "Invalid ID", http.StatusBadRequest)
+		http.Error(w, "Error parsing form", http.StatusBadRequest)
 		return
 	}
 
-	// Parse form values
-	err = r.ParseForm()
+	id, err := strconv.Atoi(r.URL.Query().Get("id"))
 	if err != nil {
-		http.Error(w, "Error parsing form", http.StatusBadRequest)
+		http.Error(w, "Invalid ID", http.StatusBadRequest)
 		return
 	}
 
@@ -198,7 +198,7 @@ func getCarByID(db *sql.DB, id int) (Car, error) {
 func updateCar(db *sql.DB, car Car) error {
 	_, err := db.Exec(`
         UPDATE cars
-        SET number_plate = ?, make = ?, model = ?, number_of_passengers = ?, sacco_id = ?
+        SET number_plate = ?, make = ?, model = ?, no_of_passengers = ?, sacco_id = ?
         WHERE id = ?`,
 		car.NumberPlate, car.Make, car.Model, car.NumberOfPassengers, car.SaccoID, car.ID)
 	return err
