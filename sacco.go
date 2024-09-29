@@ -61,7 +61,7 @@ func saccoHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		if err := tmpl.ExecuteTemplate(w, "sacco.html", saccos); err != nil {
+		if err := tmpl.ExecuteTemplate(w, "saccos", saccos); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
 	} else if r.Method == http.MethodPost {
