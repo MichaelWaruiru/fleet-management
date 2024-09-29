@@ -3,7 +3,6 @@ package main
 import (
 	"database/sql"
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"strconv"
 )
@@ -176,7 +175,6 @@ func driverDetailHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	fmt.Println("Drivers:", driver)
 
 	// Respond with the driver data as JSON
 	w.Header().Set("Content-Type", "application/json")
