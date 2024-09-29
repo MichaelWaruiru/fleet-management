@@ -150,6 +150,39 @@ func getSaccoByCarID(db *sql.DB, carID string) (Sacco, error) {
 	return sacco, nil
 }
 
+func getDriverByID(db *sql.DB, driverID int) (Driver, error) {
+	var driver Driver
+	query := `SELECT drivers.id, driver_name, drivers.id_number, drivers.contact, drivers.car_id, drivers.sacco_id
+				FROM drivers
+				WHERE drivers.id = ?`
+	row := db.QueryRow(query, driverID)
+	err := row.Scan(&driver.ID, &driver.DriverName, &driver.IDNumber, &driver.Contact, &driver.CarID, &driver.SaccoID)
+	if err != nil {
+		return driver, err
+	}
+	return driver, nil
+}
+
+// driverDetailHandler handles requests to get a single driver's details
+func driverDetailHandler(w http.ResponseWriter, r *http.Request) {
+	driverID, err := strconv.Atoi(r.URL.Path[len("/drivers/"):]) // Get driver ID from the URL
+	if err != nil {
+		http.Error(w, "Invalid driver ID", http.StatusBadRequest)
+		return
+	}
+
+	driver, err := getDriverByID(db, driverID)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	fmt.Println("Drivers:", driver)
+
+	// Respond with the driver data as JSON
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(driver)
+}
+
 func editDriverHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPut {
 		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
@@ -169,13 +202,14 @@ func editDriverHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	carID, err := strconv.Atoi(r.FormValue("editAssignedCar"))
+	// Parse the remaining form fields
+	carID, err := strconv.Atoi(r.FormValue("assignedCar"))
 	if err != nil {
 		http.Error(w, "Invalid car ID", http.StatusBadRequest)
 		return
 	}
 
-	saccoID, err := strconv.Atoi(r.FormValue("editSaccoID"))
+	saccoID, err := strconv.Atoi(r.FormValue("saccoID"))
 	if err != nil {
 		http.Error(w, "Invalid sacco ID", http.StatusBadRequest)
 		return
@@ -183,28 +217,30 @@ func editDriverHandler(w http.ResponseWriter, r *http.Request) {
 
 	driver := Driver{
 		ID:         id,
-		DriverName: r.FormValue("editDriverName"),
-		IDNumber:   r.FormValue("editIDNumber"),
-		Contact:    r.FormValue("editContact"),
+		DriverName: r.FormValue("driverName"),
+		IDNumber:   r.FormValue("idNumber"),
+		Contact:    r.FormValue("contact"),
 		CarID:      carID,
 		SaccoID:    saccoID,
 	}
 
-	fmt.Println(driver)
-
+	// Update the driver in the database
 	if err := updateDriver(db, driver); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	http.Redirect(w, r, "/drivers", http.StatusSeeOther)
+	// Respond with a success message (JSON response)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte(`{"message": "Driver updated successfully"}`))
 }
 
 func updateDriver(db *sql.DB, driver Driver) error {
 	_, err := db.Exec(`
-	UPDATE drivers
-	SET driver_name = ?, id_number = ?, contact = ?, car_id = ?, sacco_id = ?
-	WHERE id = ?`,
-		driver.DriverName, driver.IDNumber, driver.Contact, driver.CarID, driver.SaccoID, driver.ID) // Corrected: sacco_id and car_id
+    UPDATE drivers
+    SET driver_name = ?, id_number = ?, contact = ?, car_id = ?, sacco_id = ?
+    WHERE id = ?`,
+		driver.DriverName, driver.IDNumber, driver.Contact, driver.CarID, driver.SaccoID, driver.ID)
 	return err
 }
