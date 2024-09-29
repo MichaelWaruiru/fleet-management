@@ -3,6 +3,8 @@ package main
 import (
 	"database/sql"
 	"fmt"
+	"html/template"
+	"log"
 	"net/http"
 	"strconv"
 )
@@ -46,6 +48,16 @@ func saccoHandler(w http.ResponseWriter, r *http.Request) {
 		saccos, err := getAllSaccos(db)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		// Execute menu template
+		menuTemplate := template.Must(template.ParseFiles("templates/menu.html"))
+
+		err = menuTemplate.Execute(w, saccos)
+		if err != nil {
+			http.Error(w, "Internal server error", http.StatusInternalServerError)
+			log.Println("Error executing menu template:", err)
 			return
 		}
 

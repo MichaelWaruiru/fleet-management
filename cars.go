@@ -4,6 +4,8 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"html/template"
+	"log"
 	"net/http"
 	"strconv"
 )
@@ -68,6 +70,16 @@ func carHandler(w http.ResponseWriter, r *http.Request) {
 		}{
 			Cars:   cars,
 			Saccos: saccos,
+		}
+
+		// Execute menu template
+		menuTemplate := template.Must(template.ParseFiles("templates/menu.html"))
+
+		err = menuTemplate.Execute(w, cars)
+		if err != nil {
+			http.Error(w, "Internal server error", http.StatusInternalServerError)
+			log.Println("Error executing menu template:", err)
+			return
 		}
 
 		err = tmpl.ExecuteTemplate(w, "cars", data)

@@ -3,6 +3,8 @@ package main
 import (
 	"database/sql"
 	"encoding/json"
+	"html/template"
+	"log"
 	"net/http"
 	"strconv"
 )
@@ -78,6 +80,16 @@ func driverHandler(w http.ResponseWriter, r *http.Request) {
 			Drivers: drivers,
 			Cars:    cars,
 			Saccos:  saccos,
+		}
+
+		// Execute menu template
+		menuTemplate := template.Must(template.ParseFiles("templates/menu.html"))
+
+		err = menuTemplate.Execute(w, drivers)
+		if err != nil {
+			http.Error(w, "Internal server error", http.StatusInternalServerError)
+			log.Println("Error executing menu template:", err)
+			return
 		}
 
 		if err := tmpl.ExecuteTemplate(w, "drivers", data); err != nil {
